@@ -1,357 +1,452 @@
-# SIA — AI Shopping Concierge
+# 🛍️ Kapruka Sia — AI Shopping Concierge
 
-> A conversational shopping assistant for Kapruka. Customers simply *chat* with Sia in plain
-> language, and Sia discovers products, builds gifts, manages the cart, handles checkout, and
-> tracks orders — all in one calm, guided conversation.
+> Chat with **Sia** and she shops Sri Lanka for you — finding products, building carts,
+> checking delivery, and creating real Kapruka payment links, all in plain English,
+> Sinhala, or Singlish.
 
----
+<p>
+  <img alt="version" src="https://img.shields.io/badge/version-0.20.2-blue">
+  <img alt="python" src="https://img.shields.io/badge/python-3.11%2B-3776AB">
+  <img alt="backend" src="https://img.shields.io/badge/backend-FastAPI-009688">
+  <img alt="redis" src="https://img.shields.io/badge/cache-Redis-DC382D">
+  <img alt="postgres" src="https://img.shields.io/badge/db-Postgres-4169E1">
+  <img alt="llm" src="https://img.shields.io/badge/LLM-Claude%20%7C%20MiniMax-8A2BE2">
+  <img alt="challenge" src="https://img.shields.io/badge/Kapruka%20MCP-Agent%20Challenge-orange">
+</p>
 
-## Overview
-
-**SIA** turns online shopping into a natural conversation instead of a search-and-click chore.
-
-- 🛍️ **AI-powered shopping assistant** — talk to Sia the way you'd talk to a helpful store concierge.
-- 💬 **Conversational commerce** — discover, compare, decide, and check out, all inside one chat.
-- 🎁 **Gift expert** — describe the person and occasion; Sia recommends a thoughtful bundle.
-- 🧠 **Personalized & context-aware** — Sia remembers the conversation, recognises returning shoppers, and tailors suggestions.
-- 🔒 **Safe by design** — all prices and payment steps are verified on the server; nothing risky happens by accident.
-
-The product runs in a calm **"Spotlight" shell**: a collapsible left sidebar (brand, *New chat*, shortcuts, language switch, identity row, cart) with the **Sia chat** beside it and a **live shopping canvas on the right** (products, cart, delivery, checkout, payment, tracking). As you talk, the canvas updates in real time. The rail auto-collapses to icons once a conversation is underway so the canvas gets full width.
-
----
-
-# Technology Highlights
-
-- 🤖 AI-Powered Conversational Commerce
-- 🎯 Context-Aware, Personalized Recommendations
-- 🧩 Live Catalog Integration (real Kapruka products, prices & delivery)
-- 🔐 Server-Side Safety (verified prices, gated checkout, expiring payment links)
-- 📊 Admin Monitoring, Budgets & Analytics
-- 🌐 Multi-Provider AI (Claude / MiniMax, optional OpenAI polish)
-- 🗣️ Future-Ready for Voice & Multilingual Shopping
+Sia is a **conversational shopping workspace**: you talk to her on the left, and a live
+shopping canvas on the right fills with real products, cart reviews, checkout confidence,
+payment links, and order tracking. Under the hood a FastAPI backend runs an **LLM tool-use
+loop** against the **live Kapruka MCP server** (`https://mcp.kapruka.com/mcp`). Every money
+decision — pricing, checkout, payment — is gated in backend code, never left to the model.
 
 ---
 
-# Customer Application (Frontend)
+## ✨ What Sia can do
 
-The shopper-facing two-pane web app. This is where customers meet Sia.
+Most visual and useful capabilities first.
 
-## 1. AI Shopping Assistant
+| Capability | What it means |
+|---|---|
+| 🔎 **Live product discovery** | Real Kapruka search, shown as image-rich cards ranked with deterministic value badges (Top match, In stock, Best value…) — never a wall of text |
+| 🎨 **Multi-item + matching** | "a blue tshirt and matching trousers" → one ranked section per item, colour-coordinated |
+| 🔀 **Variant picker** | Products with colour/size/style prompt an inline picker; only the real purchasable SKU is added |
+| 🧺 **Image-rich cart** | Add/remove from product cards without leaving the grid; prices re-verified on every add |
+| 🎁 **Guided gift building** | Ask for "a gift under 6000" and Sia collects occasion, recipient, budget, and vibe, then bundles items |
+| 🗓️ **Occasion planning** | Budget-aware, multi-category gift plans built from live searches (e.g. a birthday bundle within a cap) |
+| 💾 **Wishlist** | Save products for later; price and stock re-checked before anything is added to cart |
+| 🔁 **Buy again** | Reorder a past order — price/stock re-verified live, unavailable items flagged before adding |
+| 📦 **My orders & tracking** | List all past orders; open any for a rich delivery-path card (status, dates, route rail, greeting) |
+| 💳 **Gated checkout** | Full path to a real payment link — created only after a server-side preview intent and your explicit confirmation |
+| 🎂 **Cake icing text** | Add a personalized icing message to cakes that carries through to the order |
+| 💌 **Gift message** | Order-level gift note shown on the cart card and passed to checkout — editable/removable, never lost |
+| 🗣️ **Trilingual** | English / **Sinhala** / **Singlish** (romanized Sinhala), re-detected every turn (never latches to one language) |
+| 🎙️ **Voice input** | Talk to Sia instead of typing — browser speech recognition with trilingual prompts (English / Sinhala / Singlish) |
+| 🎭 **Communication style** | Tell Sia to be brief, warm, or playful — she adapts her tone to you |
+| 👍 **Recommendation feedback** | A thumbs up/down loop that tunes what Sia suggests next |
+| 🙋 **Returning experience** | Long-lived identity cookie greets you back by name, restores your cart ("Welcome back"), and resurfaces recently viewed products |
 
-### Features
-- Natural, human-like conversations in plain language
-- Product discovery through chat
-- Personalized product recommendations
-- Context-aware responses based on the whole conversation
-- Multi-turn conversations with follow-up handling
-- Live "mood" and typing cues so the assistant feels responsive
+### 🔒 Consent-gated personalization
 
-### Sub-Features
-- Understands what the customer actually wants (intent, not just keywords)
-- Remembers the context of the current conversation
-- Handles vague or ambiguous requests by asking smart follow-ups
-- Explains *why* it recommends something
-- Greets returning customers by name (when they've introduced themselves)
+Opt-in only. Nothing below is remembered unless you agree, and you can view or delete it
+at any time.
 
----
-
-## 2. Product Discovery
-
-### Features
-- Search the live Kapruka catalog using natural language
-- Category exploration with starter prompts and quick chips
-- A broad results grid with pagination
-- Product comparison
-- Similar / related product suggestions
-
-### Sub-Features
-- Price-based filtering (e.g. "under 6000")
-- On-the-spot local filters in the result pane (e.g. "only red colour")
-- Occasion-based suggestions
-- Recipient-based recommendations
-- Clean, image-forward product cards (titles sanitized for a polished look)
+| Capability | What it means |
+|---|---|
+| 👤 **Save recipient** | Store a gift recipient to reuse — name and phone are **encrypted at rest** |
+| 🗓️ **Save occasion** | Remember birthdays, anniversaries, and other dates per recipient |
+| ⏰ **Upcoming dates** | Sia surfaces saved occasions that are coming up, so you can plan ahead |
+| ⭐ **Remember preference** | Learn ranking/style preferences to personalize future results |
+| 🧠 **View / forget memory** | Inspect exactly what Sia remembers and delete any of it on demand |
 
 ---
 
-## 3. Gift Assistant
+## 🚀 Try it
 
-### Features
-- Guided gift-building flow
-- Gift recommendation engine that proposes a coordinated 2–3 item bundle
-- Recipient and occasion profiling
+Start the app (see [Quick start](#-quick-start)), open **http://127.0.0.1:4173/**, and say:
 
-### Sub-Features
-- Asks for **occasion → recipient → budget → vibe**, then recommends
-- Add a whole gift bundle to the cart in one action
-- Personal gift message that rides all the way through to checkout
-  - Add, edit, or remove the gift message at any time
-  - The message is shown on the cart card so it's never lost
-- Occasion-aware suggestions (birthdays, anniversaries, holidays, and more)
+```text
+hello                                           → Sia greets you (doesn't just start searching)
+I'm looking for a gift                          → guided gift build, progress shown on the canvas
+flowers for amma under 6000
+a blue t-shirt and a red t-shirt and matching trousers
+add the first one                               → variant picker if the product has options
+add gift message                                → rides through to checkout, shown on the cart card
+show my cart
+deliver to Negombo next Friday, recipient is Nimal 0771234567
+show all my past orders
+```
 
----
-
-## 4. Shopping Cart
-
-### Features
-- Add products
-- Remove products
-- Update quantities
-- Review the full cart on request
-
-### Sub-Features
-- AI-assisted cart management directly from chat ("add the first one")
-- Add-to-cart straight from product cards without leaving the results grid
-- A live cart pill in the top bar
-- Cart summary with the order-level gift message and one-click Edit / Remove
-- Cart survives a server restart (state is safely stored server-side)
+Sia collects what she's missing, confirms, and returns a **payment link card**. Use
+**New chat** to clear the session and cart (your identity cookie is kept, so you're still
+greeted back next time).
 
 ---
 
-## 5. Checkout Experience
+## 🏗️ How it works
 
-### Features
-- Guided, conversational checkout
-- Delivery information collection
-- Order review before paying
-- Payment link generation
+### System architecture
 
-### Sub-Features
-- Sia collects delivery city, date, and recipient details conversationally
-- Live **delivery availability check** before payment
-- A clear checkout review card with the amount and any warnings
-- Secure payment link card returned only after the customer confirms
-- Built-in safety: payment links and checkout previews expire, and any cart change triggers a fresh review
+```mermaid
+flowchart TB
+    subgraph client[Client]
+        U([Shopper browser])
+        A([Admin browser])
+    end
 
----
+    subgraph edge["Static / Nginx"]
+        FE[Shopper frontend<br/>:4173]
+        AFE[Admin dashboard<br/>:4174]
+        LP[Landing<br/>:4175]
+    end
 
-## 6. Customer Order Management
+    subgraph app["Application — FastAPI"]
+        subgraph be[Shopper backend :8000]
+            ORC[Agent orchestrator<br/>tool-use loop]
+            SVC[Services<br/>normalize · sessions<br/>identity · analytics]
+            MCPC[MCP client<br/>allowlist · cache<br/>circuit breaker]
+        end
+        ABE[Admin backend :8001<br/>read-only ops + budgets]
+    end
 
-### Features
-- Order tracking
-- Order history
-- Delivery status updates
+    subgraph ext[External]
+        LLM[LLM provider<br/>Claude / MiniMax]
+        MCP[(Kapruka MCP<br/>mcp.kapruka.com)]
+    end
 
-### Sub-Features
-- Rich delivery-path tracking card with a status pill
-  (Delivered / Out for delivery / Shipped / Cancelled / …)
-- Ordered, shipped, and delivered dates, amount, payment method, and city
-- "Show all my past orders" lists previously tracked orders
-- Real recipient greeting taken from the order (never invented)
-- Collapsible view of the detailed delivery progress updates
+    subgraph data[Data stores]
+        R[("Redis<br/>sessions · cart · checkout intents<br/>MCP read cache · catalog · token counter")]
+        P[("Postgres<br/>customer identity · saved orders<br/>recipients · AI usage & budgets")]
+    end
 
----
+    U --> FE
+    A --> AFE
+    U --> LP
+    FE -->|"/api/chat · /stream"| ORC
+    ORC --> SVC
+    ORC --> MCPC
+    ORC <-->|messages + tool calls| LLM
+    MCPC -->|7 allowed tools| MCP
+    SVC <--> R
+    SVC <--> P
+    MCPC <-->|30-min TTL cache| R
+    AFE --> ABE
+    ABE <--> R
+    ABE <--> P
+    ABE -.->|provider / budget switch| SVC
+```
 
-## 7. Reorder & Repeat Shopping
+Both data stores **fall back gracefully**: Redis → in-memory, Postgres → identity-less
+mode, so a single `uvicorn` runs with neither.
 
-### Features
-- Quick reordering of past purchases
-- Preview before reordering
+### One turn, end to end
 
-### Sub-Features
-- List orders that can be reordered
-- Preview a reorder, then add it to the cart in one step
-- Reduces effort for loyal, repeat customers
+1. The frontend posts your message to the backend (BFF).
+2. The **orchestrator** (`agent/orchestrator.py`) runs a bounded tool-use loop — the LLM
+   calls Kapruka MCP tools (search, cart, checkout, track) and local tools (wishlist, cart).
+   Multi-item searches run **concurrently** in one turn.
+3. Results are **normalized and ranked** server-side (`services/normalize.py`), with money
+   math and value badges computed in code — not by the model.
+4. The backend returns a `ChatResponse`: reply text **plus** typed UI `blocks[]` that the
+   canvas renders (product grids, cart, tracking cards).
+5. With streaming on, tool calls finish first, then the final text streams as SSE `delta`
+   events and the `blocks[]` envelope attaches at the end.
 
----
+**Design decisions that matter:**
 
-## 8. Personalization Engine
+- **Checkout is always gated in backend code.** A payment link is only created after a
+  server-side preview intent exists and the shopper confirms. `kapruka_create_order` is
+  idempotency-keyed and never retried.
+- **Tool output is DATA, not instructions.** Prompt-injection defense lives in the system
+  prompt; MCP responses can't hijack Sia.
+- **Graceful degradation.** Redis → in-memory fallback, Postgres → identity-less mode. A
+  single `uvicorn` works with neither.
+- **Cache-friendly prompting.** The system prompt is cached; per-turn returning-customer
+  context is injected into the *user* message (`services/turn_context.py`) to preserve it.
 
-### Features
-- Returning-customer recognition
-- Preference awareness
-- Use of saved shopping context
+### Kapruka MCP tools used
 
-### Sub-Features
-- Recognises a returning browser and welcomes the shopper back by saved name
-- **Time-aware welcome greeting** — "Good morning / afternoon / evening" based on the
-  shopper's local clock, with their name appended when known (e.g. "Good morning, Nimal"),
-  localized across English, Sinhala, and Singlish
-- **Real identity row** in the sidebar — shows the saved name and the delivery city from the
-  shopper's most recent order (falls back to a saved recipient's city, then a neutral guest line)
-- Saved **recipients** (the people you shop for)
-- Saved **occasions** with upcoming-occasion reminders
-- **Wishlist** — save items, view them, and add the wishlist to the cart
-- **Customer memory** — Sia can remember preferences, with the customer in control
-  (view, forget, and consent management)
-- **Recommendation feedback** — Sia learns from what the customer liked or passed on
+The MCP client enforces a hard allowlist — Sia can only ever call these seven:
 
----
+| Tool | Purpose |
+|---|---|
+| `kapruka_list_categories` | Browse the catalog taxonomy |
+| `kapruka_search_products` | Live product search |
+| `kapruka_get_product` | Product details + variants |
+| `kapruka_list_delivery_cities` | Valid delivery destinations |
+| `kapruka_check_delivery` | Delivery availability / perishable rules |
+| `kapruka_create_order` | Create the order (idempotency-keyed, never retried) |
+| `kapruka_track_order` | Track an existing order |
 
-## 9. Voice & Future AI Features *(Planned)*
-
-### Planned Features
-- Voice conversations with Sia
-- Speech-to-text shopping
-- Text-to-speech responses
-- Fully hands-free shopping assistant
-
----
-
-# Admin Application
-
-A separate dashboard for the business to monitor and steer the platform. Built as its own
-secure app with login.
-
-## 1. Dashboard (Overview)
-
-### Features
-- Business and platform overview at a glance
-- Live system monitoring
-- Usage insights
-
-### Sub-Features
-- System health and readiness status
-- Session and activity counts
-- Operational snapshot of the platform
-
----
-
-## 2. AI Monitoring
-
-### Features
-- AI usage tracking
-- Conversation/usage analytics
-- AI cost monitoring
-
-### Sub-Features
-- Token usage tracking
-- Per-model cost estimates
-- **Provider switching** — choose the active AI provider (Claude / MiniMax) at runtime
-- **AI budget controls** — monthly/daily budgets, per-session and per-request limits, thresholds
-- **Emergency AI off-switch** for instant cost protection
-- *Note: cost figures are local estimates, not provider billing records*
+Reads are cached (30-min TTL) and guarded by a circuit breaker; only reads are retried.
 
 ---
 
-## 3. Customer Management
+## 🗄️ Database design
 
-### Features
-- Customer insights
-- Shopping-behaviour visibility
+Two stores split by access pattern: **Redis** for fast, ephemeral, per-session state and
+caches; **Postgres** for durable customer data. Both are optional — Redis falls back to
+in-memory and Postgres to identity-less mode.
 
-### Sub-Features
-- Customer profiles and metadata
-- Returning-customer identification
-- Drill-down into individual customer detail and recent sessions
-- Recent session IPs for diagnostics
-- *Read-only view*
+### Redis keyspace
 
----
+| Key pattern | Holds | Notes |
+|---|---|---|
+| `sia:session:{id}` | Conversation history for the turn loop | per session |
+| `sia:cart:{owner}` | Working cart (items, variants, gift message) | survives restart if volume intact |
+| `sia:checkout:intent:{id}` · `sia:checkout:latest:{id}` | Server-side checkout preview intent | gate before any payment link |
+| `sia:checkout:idempotency:{key}` | Order idempotency key | ensures `create_order` runs once |
+| `sia:ratelimit:create_order:{owner}` | Per-owner order rate limit | abuse guard |
+| `sia:mcp:{tool}:{args}` | Kapruka MCP read cache | 30-min TTL |
+| `sia:product:{id}` | Product detail cache | read cache |
+| `sia:bootstrap:*` | Bootstrap catalog snapshot | warm-start data |
+| `sia:guided_gift:{id}` | Guided gift-build state | multi-turn flow |
+| `sia:budget:{day}` | Daily AI token counter | cost circuit breaker |
+| `sia:persona_isolated:{id}` | Session-scoped persona isolation | QA safety |
+| `sia:reorder:preview:{id}` | Reorder preview payload | Buy-Again flow |
 
-## 4. Order Management
+### Postgres schema
 
-### Features
-- Order oversight
-- Saved tracked-order visibility
+`customers` is the hub; a browser cookie's **SHA-256 hash** (never the cookie itself) maps
+to it via `customer_identities`. Recipient PII (`full_name`, `phone`, `address`) is stored
+**encrypted at rest**; `owner_key` scopes rows to a customer (cross-session) or a lone
+session (anonymous) without a join.
 
-### Sub-Features
-- Review saved order snapshots
-- Status visibility for customer-support workflows
-- Paginated, sortable tables for easy navigation
-- *Read-only view*
+```mermaid
+erDiagram
+    customers ||--o{ customer_identities : "cookie hash"
+    customers ||--o{ customer_sessions : "has"
+    customers ||--o{ customer_orders : "placed"
+    customer_orders ||--o{ customer_order_items : "contains"
+    customers ||--o{ customer_memories : "remembers"
+    customers ||--o{ customer_preferences : "prefers"
+    customers ||--o{ recently_viewed_products : "viewed"
+    customers ||--o{ wishlists : "owns"
+    wishlists ||--o{ wishlist_items : "holds"
+    customers ||--o{ saved_recipients : "saved"
+    saved_recipients ||--o{ saved_recipient_addresses : "delivers to"
+    customers ||--o{ saved_occasions : "tracks"
+    saved_recipients ||--o{ saved_occasions : "for"
 
----
+    customers {
+        text id PK
+        text display_name
+        text preferred_language
+        bool memory_consent
+        jsonb metadata
+    }
+    customer_identities {
+        text identity_hash PK "SHA-256 of cookie"
+        text customer_id FK
+    }
+    customer_orders {
+        text id PK
+        text owner_key
+        text order_number
+        text order_ref
+        jsonb status_snapshot
+    }
+    customer_order_items {
+        text id PK
+        text product_id
+        int price_value
+        jsonb variant
+        text icing_text
+    }
+    saved_recipients {
+        text id PK
+        text first_name
+        text full_name_encrypted "encrypted"
+        text phone_encrypted "encrypted"
+    }
+```
 
-## 5. Retention
+The 18 tables group into five domains:
 
-### Features
-- Customer retention insights
+| Domain | Tables |
+|---|---|
+| **Identity & sessions** | `customers`, `customer_identities`, `customer_sessions` |
+| **Orders & reorder** | `customer_orders`, `customer_order_items`, `reorder_history` |
+| **Personalization** | `customer_memories`, `customer_preferences`, `recently_viewed_products`, `recommendation_feedback`, `personalization_events` |
+| **Gifting** | `saved_recipients`, `saved_recipient_addresses`, `saved_occasions`, `wishlists`, `wishlist_items` |
+| **AI ops (admin)** | `ai_budget_settings` (singleton), `ai_usage_requests` |
 
-### Sub-Features
-- Visibility into returning customers and repeat engagement
-- Supports decisions that improve loyalty
-
----
-
-## 6. Runtime Monitoring
-
-### Features
-- Live service health
-- Operational diagnostics
-
-### Sub-Features
-- Health and readiness checks
-- Redis key counts by category
-- AI provider configuration status (shown only as "configured" / "missing" — never the keys)
-
-> **Admin scope:** The admin app is intentionally focused and safe. It does **not** support
-> product editing, inventory/pricing changes, fulfillment actions, refunds, payment
-> reconciliation, or staff role management.
-
----
-
-# Behind the Scenes (Backend Services)
-
-A short, non-technical view of what powers the experience.
-
-## AI Engine
-- Orchestrates the AI assistant and its tools
-- Manages conversation context and "smart actions"
-- Connects to Claude (default) or MiniMax, with optional polish from OpenAI
-- Supports streaming replies for a responsive feel
-
-## Commerce Engine
-- Live product search against the real Kapruka catalog
-- Server-verified cart, pricing, and stock checks
-- Guided checkout and secure payment-link creation
-- Order tracking and reorder support
-
-## Analytics & Monitoring
-- AI usage and cost tracking
-- Performance and health monitoring
-- Budget enforcement and cost optimization
-
----
-
-# Key Business Benefits
-
-## For Customers
-- Faster product discovery — just describe what you want
-- Personalized recommendations and remembered preferences
-- A natural, low-effort shopping experience
-- Better, more thoughtful gift selection
-- Confidence at checkout with clear reviews and tracking
-
-## For the Business
-- More conversion opportunities through guided shopping
-- Stronger customer engagement and retention
-- Reduced support workload via self-service tracking and reorders
-- Actionable insights into shoppers and AI spend
-- Full cost control over AI usage
-
----
-
-# Current Project Status
-
-### ✅ Implemented
-- "Spotlight" shell — collapsible left sidebar, chat + live shopping canvas, auto-hiding rail
-- Time-aware personalized welcome (Good morning/afternoon/evening + name) and real identity row (name · delivery city)
-- Conversational AI shopping assistant (multi-turn, context-aware)
-- Live product discovery, filtering, and comparison
-- Guided gift flow with bundle recommendations
-- Gift message that carries through to checkout
-- Full cart management (add / remove / quantity / review) from chat and product cards
-- Guided checkout with live delivery checks and order review
-- Secure payment-link generation with expiry safeguards
-- Order tracking with rich delivery-path cards and order history
-- Reorder of past purchases
-- Returning-customer recognition and personalized welcome
-- Saved recipients, occasions, and wishlist
-- Customer memory with consent controls and recommendation feedback
-- Admin dashboard: Overview, AI Monitoring, Customers, Orders, Retention, Runtime
-- AI provider switching, budget controls, and emergency off-switch
-- Streaming chat responses
-
-### 🚧 In Progress
-- Trilingual experience (English / Sinhala / Singlish) — the personality and
-  conversation foundation are in place; the language detection and mirroring layer is being added
-- Broader, persistent analytics and audit history
-
-### 🔮 Planned
-- Voice conversations (speech-to-text and text-to-speech shopping)
-- Deeper multilingual generation quality
-- Expanded admin analytics and retention tooling
+> `reorder_history`, `personalization_events`, `recommendation_feedback`, and
+> `ai_usage_requests` are intentionally **FK-free** and append-only, so anonymous
+> (session-only) activity is still recorded. Schema lives in
+> [`backend/app/services/database.py`](backend/app/services/database.py) and is applied
+> idempotently on startup (`CREATE TABLE IF NOT EXISTS`) — no migration tool needed.
 
 ---
 
-*SIA — shopping that feels like a conversation, not a search box.*
+## 🧰 Tech stack
+
+| Layer | Choice |
+|---|---|
+| **Backend** | Python 3.11+, FastAPI, LLM tool-use loop |
+| **LLM** | Claude (default) or MiniMax — both via the Anthropic Messages API shape |
+| **Frontend** | Static HTML/CSS/JS, two-pane Spotlight shell, no build step (Nginx-served) |
+| **Data** | Redis (sessions, cart, cache), Postgres (identity, orders) |
+| **Admin** | Separate FastAPI API + static dashboard |
+| **Deploy** | Docker Compose (backend, frontend, admin, Redis, Postgres) |
+
+---
+
+## 📁 Project layout
+
+```text
+frontend/          Two-pane web app: Spotlight sidebar + chat + shopping canvas
+backend/           FastAPI BFF + LLM agent  (the core)
+  app/agent/         orchestrator.py (tool-use loop), prompts.py, local_tools.py
+  app/llm/           providers.py (Claude / MiniMax abstraction)
+  app/mcp/           kapruka_client.py (allowlist, cache, circuit breaker), tools.py
+  app/services/      normalize, occasion_planner, sessions, analytics, identity…
+  app/api/           chat.py — /api/chat (JSON) and /api/chat/stream (SSE)
+admin-backend/     Standalone FastAPI admin API (read-only ops + AI budgets)
+admin-frontend/    Standalone static/Nginx admin dashboard
+landing/           Static marketing page
+docs/              Architecture, MCP reference, backend/security plans
+```
+
+---
+
+## ⚡ Quick start
+
+### Option A — Local (fastest to hack on)
+
+**Backend** (Python 3.11+, a Claude or MiniMax API key):
+
+```bash
+cd backend
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+cp .env.example .env          # set LLM_PROVIDER and the matching API key
+uvicorn app.main:app --port 8000
+curl localhost:8000/readyz    # → {"status":"ready"}
+```
+
+**Frontend** (any static server):
+
+```bash
+python3 -m http.server 4173 --directory frontend
+```
+
+Open **http://127.0.0.1:4173/** and say hi to Sia. Without Docker, the frontend talks to
+`http://127.0.0.1:8000` (set `window.SIA_API_BASE` or edit `frontend/config.js` to change).
+The backend's `CORS_ALLOW_ORIGINS` must include the frontend origin.
+
+### Option B — Docker (full system)
+
+```bash
+cp backend/.env.example backend/.env
+cp redis/.env.example redis/.env
+cp postgres/.env.example postgres/.env
+cp frontend/.env.example frontend/.env
+cp admin-backend/.env.example admin-backend/.env
+cp admin-frontend/.env.example admin-frontend/.env
+# edit backend/.env: set LLM_PROVIDER + API key; set the DB passwords
+docker compose up --build
+```
+
+| URL | App |
+|---|---|
+| http://127.0.0.1:4173/ | Shopper chat |
+| http://127.0.0.1:4174/ | Admin dashboard |
+| http://127.0.0.1:4175/ | Landing page |
+
+> Keep `REDIS_PASSWORD` identical across `backend/.env` and `redis/.env`, and
+> `POSTGRES_PASSWORD` identical across `backend/.env` and `postgres/.env`.
+> More detail in [`docs/DOCKER.md`](docs/DOCKER.md).
+
+---
+
+## ⚙️ Configuration
+
+Key `backend/.env` values:
+
+| Var | Purpose |
+|---|---|
+| `LLM_PROVIDER` | `claude` or `minimax` |
+| `CLAUDE_API_KEY` / `ANTHROPIC_API_KEY` | Claude secret |
+| `MINIMAX_API_KEY` | MiniMax secret |
+| `ENABLE_CHAT_STREAMING` | `true` = SSE stream, `false` = JSON fallback |
+| `IDENTITY_COOKIE_SECURE` | `false` for local HTTP, `true` behind HTTPS |
+| `PII_ENCRYPTION_KEY` | Fernet key for saved-recipient PII at rest |
+| `AI_MONTHLY_BUDGET_USD` / `AI_DAILY_BUDGET_USD` | Cost circuit breakers |
+
+The admin dashboard can switch the active provider/model at runtime.
+
+---
+
+## 🔐 Security model
+
+- **Checkout is gated in code**, not by the model. Payment links require a server-side
+  preview intent + shopper confirmation; `kapruka_create_order` is idempotency-keyed.
+- **All money math is server-side**; prices re-verified live on add-to-cart and at checkout.
+- **Prompt-injection defense**: tool output is treated as data; the system prompt forbids
+  acting on instructions embedded in MCP responses.
+- **Identity privacy**: browsers get a long-lived HttpOnly `SameSite=Lax` cookie; Postgres
+  stores only its SHA-256 hash. Display names come only from explicit self-introductions.
+- **Guardrails**: per-IP rate limiting, security headers, MCP tool allowlist, circuit
+  breaker, and AI daily/monthly budget caps.
+
+See [`docs/BACKEND_PLAN.md`](docs/BACKEND_PLAN.md) §5 for the full model.
+
+---
+
+## 🖥️ Admin panel
+
+A separate deployment (`admin-backend/` on port 8001 + `admin-frontend/` at :4174). Local
+Docker creds are `admin` / `admin123` — **replace before any real deployment** (set
+`ADMIN_PASSWORD_HASH` via `admin-backend/scripts/hash_admin_password.py`).
+
+The panel is **read-only** for customer/order/runtime data. It shows health, customer
+metadata, session counts, saved order snapshots, and an **Analytics** funnel
+(search → view → cart → checkout → payment, top/zero-result searches, per-tool MCP health).
+Admins can switch the LLM provider, edit AI budgets, and hit the emergency AI-disable
+switch. AI cost figures are **local estimates**, not provider billing records.
+
+---
+
+## 🧪 Tests
+
+```bash
+# Backend
+cd backend && source .venv/bin/activate && cd ..
+pytest                                   # all backend tests
+pytest backend/tests/test_orchestrator.py
+
+# Frontend (plain Node, no framework)
+node frontend/tests/frontend_helpers.test.js
+
+# Lint / type-check
+ruff check backend/ && mypy backend/
+```
+
+---
+
+## 🚫 Scope
+
+Sia focuses on the shopping conversation. It does **not** do product editing, inventory or
+pricing changes, fulfillment actions, refunds, payment reconciliation, or staff role
+management. It never invents prices, order numbers, or recipient names — those come only
+from live Kapruka data.
+
+---
+
+## 🛣️ Roadmap
+
+Planned next, not yet shipped:
+
+| Item | What it adds |
+|---|---|
+| 🗣️ **Tanglish support** | Extend language detection to **Tamil written in English** (Tanglish), alongside the current English / Sinhala / Singlish |
+| ✨ **Deeper Sinhala & Singlish** | Improve fluency and coverage of the existing Sinhala and Singlish handling |
+| 🎙️ **Server-side voice** | Voice input works today in-browser (Web Speech API); move recognition server-side and add spoken replies for consistent quality across devices |
+| 💱 **Multi-currency** | Show prices and check out in currencies beyond LKR |
+
+---
+
+An entry for the **Kapruka MCP Agent Challenge**. For history see
+[`CHANGELOG.md`](CHANGELOG.md); for deep-dive architecture, security, and MCP references see
+[`docs/`](docs/).
