@@ -5,7 +5,7 @@
 > Sinhala, or Singlish.
 
 <p>
-  <img alt="version" src="https://img.shields.io/badge/version-0.20.2-blue">
+  <img alt="version" src="https://img.shields.io/badge/version-0.21.0-blue">
   <img alt="python" src="https://img.shields.io/badge/python-3.11%2B-3776AB">
   <img alt="backend" src="https://img.shields.io/badge/backend-FastAPI-009688">
   <img alt="redis" src="https://img.shields.io/badge/cache-Redis-DC382D">
@@ -19,6 +19,12 @@ shopping canvas on the right fills with real products, cart reviews, checkout co
 payment links, and order tracking. Under the hood a FastAPI backend runs an **LLM tool-use
 loop** against the **live Kapruka MCP server** (`https://mcp.kapruka.com/mcp`). Every money
 decision — pricing, checkout, payment — is gated in backend code, never left to the model.
+
+<p align="center">
+  <img alt="Sia welcome screen" src="docs/screenshots/shopper/welcome.png" width="900">
+  <br>
+  <em>The two-pane workspace — chat with Sia on the left, live shopping canvas on the right.</em>
+</p>
 
 ---
 
@@ -80,6 +86,87 @@ show all my past orders
 Sia collects what she's missing, confirms, and returns a **payment link card**. Use
 **New chat** to clear the session and cart (your identity cookie is kept, so you're still
 greeted back next time).
+
+---
+
+## 📸 Screens
+
+### Shopper
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img alt="Variant picker with live price validation" src="docs/screenshots/shopper/variant_selection_price_validate.png">
+      <p><b>🔀 Variant picker + price check</b><br>Products with colour/size/style options prompt an inline picker; only the real purchasable SKU is added, and the price is re-verified live.</p>
+    </td>
+    <td width="50%" valign="top">
+      <img alt="Voice input mode" src="docs/screenshots/shopper/voice_mode.png">
+      <p><b>🎙️ Voice input</b><br>Talk to Sia instead of typing — browser speech recognition with trilingual prompts (English / Sinhala / Singlish).</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img alt="Upcoming occasions" src="docs/screenshots/shopper/upcoming_occasions.png">
+      <p><b>🗓️ Upcoming occasions</b><br>Saved birthdays and anniversaries resurface ahead of time, so you can plan the gift before the date.</p>
+    </td>
+    <td width="50%" valign="top">
+      <img alt="Past orders list" src="docs/screenshots/shopper/past_orders.png">
+      <p><b>📦 My orders</b><br>Every past order in one place — open any of them for tracking or to buy again.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img alt="Single order tracking card" src="docs/screenshots/shopper/single_order_tracking.png">
+      <p><b>🚚 Order tracking</b><br>A rich delivery-path card: status, dates, route rail, and gift greeting.</p>
+    </td>
+    <td width="50%" valign="top">
+      <img alt="Reorder review" src="docs/screenshots/shopper/reorder_review.png">
+      <p><b>🔁 Buy again</b><br>Reorder a past order — price and stock re-verified live, unavailable items flagged before adding to cart.</p>
+    </td>
+  </tr>
+</table>
+
+### Admin dashboard
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img alt="Admin welcome / overview" src="docs/screenshots/admin/admin_welcome.png">
+      <p><b>🏠 Overview</b><br>System health, customer counts, and runtime status at a glance.</p>
+    </td>
+    <td width="50%" valign="top">
+      <img alt="Analytics funnel" src="docs/screenshots/admin/admin_analytics.png">
+      <p><b>📊 Analytics funnel</b><br>Search → view → cart → checkout → payment, plus top/zero-result searches and per-tool MCP health.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img alt="AI usage and budget" src="docs/screenshots/admin/admin_ai_usage.png">
+      <p><b>💸 AI usage & budget</b><br>Estimated token spend against daily/monthly caps, with the emergency AI-disable switch.</p>
+    </td>
+    <td width="50%" valign="top">
+      <img alt="Customer detail" src="docs/screenshots/admin/admin_customer_detail.png">
+      <p><b>👤 Customer detail</b><br>Read-only customer metadata, saved order snapshots, and session history.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img alt="Customer retention" src="docs/screenshots/admin/admin_customer_retention.png">
+      <p><b>📈 Retention</b><br>Returning-customer trends built from the durable identity store.</p>
+    </td>
+    <td width="50%" valign="top">
+      <img alt="Rate limits" src="docs/screenshots/admin/admin_rate_limits.png">
+      <p><b>🛡️ Rate limits</b><br>Per-IP throttling and abuse-guard status.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img alt="Usage logs" src="docs/screenshots/admin/admin_usage_logs.png">
+      <p><b>📜 Usage logs</b><br>Per-request AI usage records for cost estimation and auditing.</p>
+    </td>
+    <td width="50%" valign="top"></td>
+  </tr>
+</table>
 
 ---
 
