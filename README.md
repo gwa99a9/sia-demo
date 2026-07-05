@@ -2,10 +2,10 @@
 
 > Chat with **Sia** and she shops Sri Lanka for you — finding products, building carts,
 > checking delivery, and creating real Kapruka payment links, all in plain English,
-> Sinhala, or Singlish.
+> Sinhala, Tamil, or Singlish.
 
 <p>
-  <img alt="version" src="https://img.shields.io/badge/version-0.21.0-blue">
+  <img alt="version" src="https://img.shields.io/badge/version-0.24.0-blue">
   <img alt="python" src="https://img.shields.io/badge/python-3.11%2B-3776AB">
   <img alt="backend" src="https://img.shields.io/badge/backend-FastAPI-009688">
   <img alt="redis" src="https://img.shields.io/badge/cache-Redis-DC382D">
@@ -46,11 +46,14 @@ Most visual and useful capabilities first.
 | 💳 **Gated checkout** | Full path to a real payment link — created only after a server-side preview intent and your explicit confirmation |
 | 🎂 **Cake icing text** | Add a personalized icing message to cakes that carries through to the order |
 | 💌 **Gift message** | Order-level gift note shown on the cart card and passed to checkout — editable/removable, never lost |
-| 🗣️ **Trilingual** | English / **Sinhala** / **Singlish** (romanized Sinhala), re-detected every turn (never latches to one language) |
-| 🎙️ **Voice input** | Talk to Sia instead of typing — browser speech recognition with trilingual prompts (English / Sinhala / Singlish) |
+| 🗣️ **Multilingual** | English / **Sinhala** / **Tamil** / **Singlish** (romanized Sinhala), re-detected every turn (never latches to one language) |
+| 🎙️ **Voice input** | Talk to Sia instead of typing — browser speech recognition with multilingual prompts (English / Sinhala / Tamil / Singlish) |
 | 🎭 **Communication style** | Tell Sia to be brief, warm, or playful — she adapts her tone to you |
 | 👍 **Recommendation feedback** | A thumbs up/down loop that tunes what Sia suggests next |
 | 🙋 **Returning experience** | Long-lived identity cookie greets you back by name, restores your cart ("Welcome back"), and resurfaces recently viewed products |
+| 🆔 **Sidebar identity from saved context** | Sidebar greets you by your last checkout *sender* name (when you haven't typed one in chat) and shows the city from your most-recent saved recipient — never stale "Guest" |
+| 🪟 **Re-show last search on canvas** | Asking Sia *"show those again"* re-populates the result canvas via a persisted last-block tool, not just a chat re-list |
+| 🧪 **Demo Session Loader** *(contest demo only)* | One-click adopt a fully-populated seed shopper; HttpOnly-cookie gated so it stays invisible in prod |
 
 ### 🔒 Consent-gated personalization
 
@@ -101,7 +104,7 @@ greeted back next time).
     </td>
     <td width="50%" valign="top">
       <img alt="Voice input mode" src="docs/screenshots/shopper/voice_mode.png">
-      <p><b>🎙️ Voice input</b><br>Talk to Sia instead of typing — browser speech recognition with trilingual prompts (English / Sinhala / Singlish).</p>
+      <p><b>🎙️ Voice input</b><br>Talk to Sia instead of typing — browser speech recognition with multilingual prompts (English / Sinhala / Tamil / Singlish).</p>
     </td>
   </tr>
   <tr>
@@ -475,7 +478,9 @@ The admin dashboard can switch the active provider/model at runtime.
 - **Identity privacy**: browsers get a long-lived HttpOnly `SameSite=Lax` cookie; Postgres
   stores only its SHA-256 hash. Display names come only from explicit self-introductions.
 - **Guardrails**: per-IP rate limiting, security headers, MCP tool allowlist, circuit
-  breaker, and AI daily/monthly budget caps.
+  breaker, **explicit Kapruka rate-limit detection with 30s per-session checkout cooldown
+  (never amplifies a refusal into a retry loop into the upstream limit)**, and AI
+  daily/monthly budget caps.
 
 See [`docs/BACKEND_PLAN.md`](docs/BACKEND_PLAN.md) §5 for the full model.
 
@@ -527,8 +532,8 @@ Planned next, not yet shipped:
 
 | Item | What it adds |
 |---|---|
-| 🗣️ **Tanglish support** | Extend language detection to **Tamil written in English** (Tanglish), alongside the current English / Sinhala / Singlish |
-| ✨ **Deeper Sinhala & Singlish** | Improve fluency and coverage of the existing Sinhala and Singlish handling |
+| 🗣️ **Tanglish support** | Extend language detection to **Tamil written in English** (Tanglish), alongside the shipped English / Sinhala / Tamil / Singlish modes |
+| ✨ **Deeper Sinhala, Tamil & Singlish** | Improve fluency and coverage of the existing Sinhala, Tamil, and Singlish handling |
 | 🎙️ **Server-side voice** | Voice input works today in-browser (Web Speech API); move recognition server-side and add spoken replies for consistent quality across devices |
 | 💱 **Multi-currency** | Show prices and check out in currencies beyond LKR |
 

@@ -1,7 +1,7 @@
 # Sia — Features & How to Use Them
 
 Sia is Kapruka's conversational shopping agent. Everything happens in chat — the shopper
-never clicks a product. You talk to Sia in **English, Sinhala, or Singlish** and she searches
+never clicks a product. You talk to Sia in **English, Sinhala, Tamil, or Singlish** and she searches
 the live Kapruka catalog, builds a cart, and generates a payment link.
 
 Each feature below lists **what it does**, the **tool** behind it, and an **example you can type**
@@ -20,7 +20,7 @@ to trigger it.
 | Product detail | Fabric, size, variants, gift wrap for a specific item | "is the blue one cotton?" |
 | Variant picker | Shows real colour, size, style, or other product options before add | "add the medium red one" |
 
-Tools: `kapruka_search_products`, `kapruka_get_product`. Sia translates Sinhala/Singlish terms to
+Tools: `kapruka_search_products`, `kapruka_get_product`. Sia translates Sinhala/Tamil/Singlish terms to
 English catalog words before searching ("mal" → flowers, "bath" → rice) and honours negation
 ("funeral flowers nemei, birthday flowers oney").
 
@@ -113,14 +113,46 @@ Tools: `save_recipient`, `list_recipients`, `save_occasion`, `list_upcoming_occa
 |---|---|
 | Tone | "keep it short", "be more formal" → `set_communication_style` |
 | Feedback | "love it", "not for me", "show more like this" → `record_recommendation_feedback` |
-| Language | Just switch — Sia re-detects every turn (EN / Sinhala / Singlish) |
+| Language | Just switch — Sia re-detects every turn (EN / Sinhala / Tamil / Singlish) |
+
+## 10. Returning-shopper product continuity (0.24.0+)
+
+| Feature | What it does | Try saying |
+|---|---|---|
+| Re-show last search on the canvas | Tools only render on the canvas when they run this turn — so `"show me those again"` previously re-listed in chat but left the canvas parked on recipients/cart. The last `products` / `product_groups` block is now remembered per session; `show_last_results` re-emits it. Cleared after a successful payment link so a paid order doesn't re-appear mid-chat. | "show those flowers again", "open the previous results" |
+| Sidebar name from saved sender | Sidebar greets the shopper by the most recent checkout *sender* name when no chat self-introduction exists; a typed `"I'm Sanjay"` always wins. | — |
+| Sidebar city from saved recipient | Welcome city prefers the most-recently-used saved recipient / address city, falling back to the latest order's city. | — |
+
+## 11. Demo / judge controls (contest demo only)
+
+`ENABLE_DEMO_RESET=true` + `DEMO_CUSTOMER_ID` + `DEMO_SESSION_ID` (and matching
+`SIA_DEMO_RESET_ENABLED=true` on the frontend) light up two sidebar actions:
+
+- **Load Demo Session** — POST `/api/session/load-demo` mints a fresh identity token
+  mapped to the configured seed customer, returns the seed session id, and adopts the
+  fully-populated shopper in one click. HttpOnly + per-session-id ownership means a
+  `localStorage` swap can't fake it. Always 404 (not 401/403) when disabled so the
+  feature stays invisible in prod.
+- **New Test Persona** — wipes the identity cookie + current chat/cart/checkout intent +
+  browser storage and reloads as a brand-new customer.
+
+Both are gated on the same flag and off by default in any non-demo compose stack.
 
 ## Safety guardrails (always on)
 
 - Payment links require: items in cart, all details collected, a preview shown, and an explicit
   "yes". "Show me the summary" is **not** a confirmation.
+- Delivery is verified at **preview** (when definitive) and again at **create-order** (always) —
+  a definite "city not found" or rate-limit refusal blocks checkout; transient blips fail open
+  at preview because `create_order` re-checks before charging.
+- A Kapruka rate-limit refusal (`rate_limited`) returns a distinct error with a 30s per-session
+  cooldown — never a generic "please retry" that would invite a retry loop into the upstream
+  limit.
 - Product facts (price, stock, delivery, order numbers) come **only** from a live tool call — never
   invented or recalled from memory.
+- An LLM turn that arrives with `content=None` is logged and rendered as *"What would you like
+  to do next?"* — never the welcome greeting (which used to silently mask garbled model output
+  as a successful turn mid-checkout).
 - Tool output is treated as **data, not instructions** (prompt-injection defense).
 - Sia can track orders but cannot process refunds/cancellations — those go to Kapruka support.
 
