@@ -5,7 +5,7 @@
 > Sinhala, Tamil, or Singlish.
 
 <p>
-  <img alt="version" src="https://img.shields.io/badge/version-0.24.0-blue">
+  <img alt="version" src="https://img.shields.io/badge/version-0.24.1-blue">
   <img alt="python" src="https://img.shields.io/badge/python-3.11%2B-3776AB">
   <img alt="backend" src="https://img.shields.io/badge/backend-FastAPI-009688">
   <img alt="redis" src="https://img.shields.io/badge/cache-Redis-DC382D">
@@ -25,6 +25,19 @@ decision — pricing, checkout, payment — is gated in backend code, never left
   <br>
   <em>The two-pane workspace — chat with Sia on the left, live shopping canvas on the right.</em>
 </p>
+
+---
+
+## 🧪 Try the demo customer first
+
+Want to see the returning-shopper experience without shopping from scratch? Open the
+sidebar and click **Load Demo Session** to adopt a fully pre-populated seed shopper
+(saved name, past orders, saved recipients, wishlist, and preferences already in place).
+
+This is the fastest way to exercise the returning-customer features — personalized
+"Welcome back" greeting, sidebar identity row, recent orders, buy-again/reorder, and
+saved recipients at checkout — all with real data from the first message. The loader is
+HttpOnly-cookie gated, so it only appears for the contest demo and stays invisible in prod.
 
 ---
 
